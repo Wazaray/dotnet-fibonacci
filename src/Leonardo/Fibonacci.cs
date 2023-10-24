@@ -9,16 +9,21 @@ namespace Leonardo;
 
 public class Fibonacci
 {
-    public static int Run(int i)
+    private readonly FibonacciDataContext _context;
+    public Fibonacci(FibonacciDataContext context)
+    {
+        _context = context;
+    }
+    private static int Run(int i)
     {
         if (i <= 2)
             return 1;
         return Run(i - 1) + Run(i - 2);
     }
 
-    public static async Task<IList<int>> RunAsync(string[] args)
+    public async Task<IList<int>> RunAsync(string[] args)
     {
-        await using var context = new FibonacciDataContext();
+        
         if (args.Length >= 100)
         {
             throw new ArgumentException("Too much");
@@ -29,7 +34,7 @@ public class Fibonacci
         var tasks = new List<Task<int>>();
         foreach(var arg in args)
         {
-            var tfibonacci = await context.TFibonaccis
+            var tfibonacci = await _context.TFibonaccis
                 .Where(t => t.FibInput == int.Parse(arg))
                 .FirstOrDefaultAsync();
 
@@ -50,7 +55,7 @@ public class Fibonacci
         {
 
             var result = await task;
-            context.TFibonaccis.Add(new TFibonacci()
+            _context.TFibonaccis.Add(new TFibonacci()
             {
                 FibOutput = result,
                 FibInput = int.Parse(args[tasks.IndexOf(task)]),
@@ -61,7 +66,7 @@ public class Fibonacci
         stopwatch.Stop();
         Console.WriteLine("Total elapsed time: {0} ms", stopwatch.ElapsedMilliseconds);
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         return results;
     }

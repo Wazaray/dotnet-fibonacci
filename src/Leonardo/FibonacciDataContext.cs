@@ -16,10 +16,7 @@ public partial class FibonacciDataContext : DbContext
     }
 
     public virtual DbSet<TFibonacci> TFibonaccis { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=FibonacciData;Integrated Security=False;User ID=sa;Password=Your_password123;MultipleActiveResultSets=True;TrustServerCertificate=True");
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TFibonacci>(entity =>
